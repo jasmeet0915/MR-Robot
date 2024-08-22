@@ -1,5 +1,5 @@
 .vscode/*
-.build_files/*
+build_files/*
 
 devel/
 logs/

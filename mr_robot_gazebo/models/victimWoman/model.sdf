@@ -1,0 +1,42 @@
+<?xml version='1.0'?>
+<sdf version='1.5'>
+  <model name='victimWoman'>
+    <static>true</static>
+    <pose frame=''>2 -3 0 1.57 0 0</pose>
+    <link name='defaultModel_0::custom_0'>
+      <pose frame=''>0 0 0 0 0 0</pose>
+      <gravity>1</gravity>
+      <self_collide>0</self_collide>
+      <kinematic>0</kinematic>
+      <visual name='custom_0_visual'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://victimWoman/girl-brunette-dae/girl-brunette.dae</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+<!--
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+-->
+      </visual>
+      <collision name='custom_0_collision'>
+        <geometry>
+          <mesh>
+            <uri>model://victimWoman/girl-brunette-dae/girl-brunette.dae</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <pose frame=''>0 0 0 0 0 0</pose>
+      </collision>
+
+    </link>
+
+    <allow_auto_disable>1</allow_auto_disable>
+  </model>
+</sdf>

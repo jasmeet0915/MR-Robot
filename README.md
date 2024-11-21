@@ -55,22 +55,28 @@
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
+      </li>
+      <li>      
+      <a href="#installation">INSTALLATION</a>      
+      <ul>        
+        <li><a href="#mr-robot-setup">MR Robot setup</a></li>
+        <li><a href="#gazebo-setup">Gazebo Setup</a></li>           
+       </ul>
+       </li>
+       <li>
+       <a href="#depth-sensor-setup">Depth Sensor Setup</a>
+       <ul>
+       <li><a href="#pointcloud2">PointCloud2</a></li>
+       <li><a href="#octomapping">Octomapping</a></li>       
+        </ul>
+        </li>
+        <li>
+        <a href="#creating-map">Creating map</a>
+        </li>
+        <li>
+        <a href="#saving-the-new-map">Saving the new map</a>
+        </li>        
     </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -101,111 +107,275 @@ If you’re interested in helping to improve our Project</a>, find out how to <a
 
 
 
-<!-- GETTING STARTED -->
-## Getting Started
+# INSTALLATION
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+## MR Robot setup
 
-### Prerequisites
+Clone MR. Robot repository into cd catkin_ws/src/
 
-This is an example of how to list things you need to use the software and how to install them.
-* Ros
-  - Refer to our [Ros installation guide](https://atom-robotics-lab.github.io/wiki/markdown/ros/installation.html)
-  - Installing Navigation specific dependencies: map-server, move_base and amcl
-    ```sh
-    sudo apt install ros-noetic-map-server ros-noetic-move-base ros-noetic-amcl
-    ```
+```sh
+cd ~/catkin_ws/src
+git@github.com:atom-robotics-lab/MR-Robot.git
 
-* Opencv
-  ```sh
-  sudo apt install libopencv-dev python3-opencv
-  ```
+```
 
-### Installation
+Now we will use catkin make command to get the ROS on our system to recognise the examples.
+```sh
+cd ..
+catkin_make
+```
 
-1. Clone the repo inside your `Ros Workspace`
-   ```sh
-   git clone git@github.com:atom-robotics-lab/MR-Robot.git
-   cd wiki
-   ```
-2. Build the package
-   ```sh
-   cd ~/catkin_ws
-   catkin_make
-   ```
-3. Launch the packages file by
-   ```sh
-   roslaunch <package_name> <launch_file>
-   ```
+Source the setup file in newly created ‘devel’ directory so that our ROS environment can recognise the launch files.
+```sh
+source devel/setup.sh
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Gazebo Setup
+
+__Edit your bashrc file__
+
+__Now we need to setup the TurtleBot3-Gazebo package__
+
+Execute the following command to install the turtlebot3-gazebo package
+
+```sh
+sudo apt install ros-noetic-turtlebot3-gazebo
+```
+
+You need to add these lines in your bashrc file to path MR-robot in gazebo.
+To open your bashrc file
+
+```sh
+nano ~/.bashrc
+```
+
+```sh
+export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$HOME/catkin_ws/src/MR-Robot/mr_robot_gazebo/models
+```
+
+```sh
+source ~/.bashrc
+```
+
+
+ Now to launch your world in gazebo 
+ ```sh
+ roslaunch mr_robot_gazebo turtlebot3_house.launch 
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Depth Sensor Setup
+
+
+### PointCloud2
+
+A point cloud is essentially a huge collection of tiny individual points plotted in 3D space. It’s made up of a multitude of points captured using a 3D laser scanner. If you’re scanning a building, for example, each virtual point would represent a real point on the wall, window, stairway, metalwork  or any surface the laser beam comes into contact with.
+
+To 
+As always, start with an update and upgrade.
+```sh
+
+sudo apt-get update
+sudo apt-get upgrade
+
+```
+
+
+Install the dependencies
+
+```sh
+
+sudo apt-get install git-core cmake freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev
+
+```
+```sh
+sudo apt install ros-noetic-rgbd-launch
+```
+
+
+Get the libfreenect repository from GitHub
+
+```sh
+cd
+git clone git@github.com:OpenKinect/libfreenect.git
+
+```
+
+Make and install
+
+```sh
+cd libfreenect
+mkdir build
+cd build
+cmake -L ..
+make
+sudo make install
+sudo ldconfig /usr/local/lib64/
+
+```
+
+To use kinect without sudoing every time
+
+```sh
+
+sudo adduser $USER video
+sudo adduser $USER plugdev
+
+```
+
+
+Next we will add some device rules
+
+```sh
+sudo nano /etc/udev/rules.d/51-kinect.rules
+
+```
+
+
+Paste the following and ctrl-o, enter, ctrl+x to save file
+ ```sh
+ # ATTR{product}=="Xbox NUI Motor"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02b0", MODE="0666"
+# ATTR{product}=="Xbox NUI Audio"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02ad", MODE="0666"
+# ATTR{product}=="Xbox NUI Camera"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02ae", MODE="0666"
+# ATTR{product}=="Xbox NUI Motor"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02c2", MODE="0666"
+# ATTR{product}=="Xbox NUI Motor"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02be", MODE="0666"
+# ATTR{product}=="Xbox NUI Motor"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02bf", MODE="0666"
+```
+
+
+Now we will download the required ROS package.
+
+```cd
+cd ~/catkin_ws/src
+git clone git@github.com:ros-drivers/freenect_stack.git
+```
+
+
+Now we will use catkin make command to get the ROS on our system to recognise the examples.
+```sh
+cd ..
+catkin_make
+```
+
+
+Source the setup file in newly created ‘devel’ directory so that our ROS environment can recognise the launch files.
+```sh
+source devel/setup.sh
+```
+
+Now run these comands to get depth image on rviz and change fixed frame from map to camera_link
+
+
+```sh
+ roslaunch mr_robot_gazebo turtlebot3_house.launch 
+```
+```sh
+roslaunch freenect_launch freenect.launch depth_registration:=true
+
+```
+On Rviz add __PointCloud2__ and change topic to __/kinect/depth/points__
+
+Now change Fixed Frame in __Rviboot order mai ubuntu haz__: __map__ to __odom__
+          __!!!Hola depth camera working!!!__
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
+### Octomapping
 
-<!-- USAGE EXAMPLES -->
-## Usage
+The OctoMap library implements a 3D occupancy grid mapping approach, providing data structures and mapping algorithms in C++ particularly suited for robotics. The map implementation is based on an octree and is designed to meet the following requirements:
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+__Full 3D model:__ The map is able to model arbitrary environments without prior assumptions about it. The representation models occupied areas as well as free space. Unknown areas of the environment are implicitly encoded in the map. While the distinction between free and occupied space is essential for safe robot navigation, information about unknown areas is important, e.g., for autonomous exploration of an environment.
 
-- The `mr_robot_description` dir contains all the bot model description files.
-- The `mr_robot_gazebo` dir contains all the world description files.
-- The `mr_robot_nav` dir contains all the config files for enabling navigation and planning.
 
-<center><img src="images/mapping.png" height="400" width="900"></center></br></br>
+__Updatable:__ It is possible to add new information or sensor readings at any time. Modeling and updating is done in a probabilistic fashion. This accounts for sensor noise or measurements which result from dynamic changes in the environment, e.g., because of dynamic objects. Furthermore, multiple robots are able to contribute to the same map and a previously recorded map is extendable when new areas are explored.
 
-In order to run the simulation you are required to do the following:</br>
 
-* For running the `navigation simulation`.
+__Flexible:__ The extent of the map does not have to be known in advance. Instead, the map is dynamically expanded as needed. The map is multi-resolution so that, for instance, a high-level planner is able to use a coarse map, while a local planner may operate using a fine resolution. This also allows for efficient visualizations which scale from coarse overviews to detailed close-up views.
 
-  - Switch to the main branch of the repository.
-    ```sh
-    git checkout main
-    ```
-  - Launch the gazebo world.
-    ```sh
-    roslaunch mr_robot_gazebo turtlebot3_house.launch camera_enabled:=true lidar_enabled:=true kinect_enabled:=true
-    ```
-    Alternatively, you can toggle the value of the `camera_enabled`, `lidar_enabled` and `kinect_enabled` arguments to enable the 2D camera, LiDAR and the depth camera resp. according to your needs(By default, all three of them are enabled)
 
-    <img src="images/bot.png">
+__Compact:__ The map is stored efficiently, both in memory and on disk. It is possible to generate compressed files for later usage or convenient exchange between robots even under bandwidth constraints.
 
-  - Launch the navigation file.
-    ```sh
-    roslaunch mr_robot_nav navigation.launch
-    ```
-    **_NOTE:_** Make sure that you have installed the navigation dependencies before running the navigation launch file.<br />
-
-  - Setting the goal
-    In the Rviz add a 2d on the map.<br /> <br />
-
-  Voila! The bot will start moving towards the goal now.<br /><br />
-
-* For running `Octomapping simulation`.
-
-  - Switch to the point_cloud_navigation branch.
-    ```sh
-    git checkout point_cloud_navigation
-    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+__Install Octomap__
+```sh
+sudo apt-get install ros-noetic-octomap ros-noetic-octomap-mapping ros-noetic-octomap-msgs ros-noetic-octomap-ros ros-noetic-octomap-rviz-plugins ros-noetic-octomap-server
+```
+__Octomap dependencies__
 
+```sh
+cd
+git clone git@github.com:OctoMap/octomap.git
+cd octomap
+mkdir build
+cd build
+cmake ..
+make
+```
 
-<!-- ROADMAP -->
-## Roadmap
+Clone kinetic-devel branch of octomapping
 
-- [x] Alpha version
-- [x] Version 1
-    - [x] Adding camera
-    - [x] Adding 3d camera
-    - [ ] Hardware prototype
+```sh
+cd ~/catkin_ws/src
+git clone git@github.com:OctoMap/octomap_mapping.git
+cd ..
+catkin_make
+```
+Now go to directory __octomap_mapping/octomap_server/launch__ and open __octomapping.launch__ and change following lines:
 
-See the [open issues](https://github.com/atom-robotics-lab/MR-Robot/issues) for a full list of proposed features (and known issues).
+in __line_14__ __odom_combined__ --> __odom__
+in __line_20__ __/narrow_stereo/points_filtered2__ --> __/kinect/depth/points__
+
+### 
+
+Run 
+```sh
+roslaunch octomap_server octomap_mapping.launch
+```
+###
+
+Now on Rviz add __MarkerArray__ and change topic to __/occupied_cells_vis_array__
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Creating map
 
+Install Teleop-twist-keyboard
+
+```sh
+sudo apt install ros-noetic-teleop-twist-keyboard
+```
+
+Now navigate bot in gazebo using teleop twist keyboard 
+
+```sh
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py 
+
+``` 
+this will create your map
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Saving the new map
+
+Now that we have created a new map, we need to save it to be able to use it in future. Open a new terminal in the maps directory inside the mr_robot_nav package and execute the following command there :
+
+```sh
+rosrun octomap_server octomap_saver -f custom_map.bt
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -266,3 +436,4 @@ Demo: [Video]("")
 [issues-url]: https://github.com/atom-robotics-lab/MR-Robot/issues
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/company/a-t-o-m-robotics-lab/
+

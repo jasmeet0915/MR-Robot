@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find mr_robot_gazebo)/launch/turtlebot3_kinect.launch" />
+    <include file="$(find octomap_server)/launch/octomap_mapping.launch" />
+</launch>
